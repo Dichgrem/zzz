@@ -51,9 +51,9 @@ jobs:
 
       - name: Download and build libpcap
         run: |
-          wget https://www.tcpdump.org/release/libpcap-1.10.5.tar.gz
-          tar xf libpcap-1.10.5.tar.gz
-          cd libpcap-1.10.5
+          wget https://www.tcpdump.org/release/libpcap-1.10.6.tar.gz
+          tar xf libpcap-1.10.6.tar.gz
+          cd libpcap-1.10.6
           CC="zig cc -target ${{ matrix.system }}" \
           AR="zig ar" \
           RANLIB="zig ranlib" \
@@ -63,7 +63,7 @@ jobs:
 
       - name: Build for ${{ matrix.system }}
         run: |
-          export PKG_CONFIG_LIBDIR=$(pwd)/libpcap-1.10.5/lib/pkgconfig
+          export PKG_CONFIG_LIBDIR=$(pwd)/libpcap-1.10.6/lib/pkgconfig
           meson setup build-${{ matrix.system }} --cross-file cross/${{ matrix.system }}.toml
           cd build-${{ matrix.system }}
           meson compile
