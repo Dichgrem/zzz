@@ -1,0 +1,87 @@
+@import "tailwindcss";
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html, body, #app { width: 100%; height: 100%; overflow: hidden; }
+body { font-family: 'Segoe UI', system-ui, sans-serif; background: #f1f5f9; color: #1e293b; user-select: none; }
+
+/* ── Drag region ── */
+.titlebar { --wails-draggable: drag; }
+.titlebar button, .titlebar select, .titlebar input { --wails-draggable: no-drag; }
+
+/* ── Inputs ──────────────────────────────────────────── */
+.field {
+  width: 100%; padding: 11px 14px; font-size: 14px; font-family: inherit;
+  background: #fff; border: 1.5px solid #e2e8f0; border-radius: 10px;
+  color: #1e293b; outline: none; transition: border-color 0.2s, box-shadow 0.2s;
+}
+.field:focus { border-color: #93c5fd; box-shadow: 0 0 0 3px rgba(37,99,235,0.12); }
+.field::placeholder { color: #94a3b8; }
+
+/* ── Buttons ─────────────────────────────────────────── */
+.btn {
+  display: inline-flex; align-items: center; justify-content: center;
+  padding: 11px 24px; border-radius: 10px; font-size: 14px; font-weight: 600;
+  border: none; cursor: pointer; transition: all 0.15s; font-family: inherit;
+  gap: 6px;
+}
+.btn-primary { background: #2563eb; color: #fff; }
+.btn-primary:hover { background: #1d4ed8; }
+.btn-primary:active { transform: scale(0.97); }
+.btn-primary:disabled { background: #e2e8f0; color: #94a3b8; cursor: not-allowed; transform: none; }
+
+.btn-disconnect {
+  display: inline-flex; align-items: center; justify-content: center;
+  padding: 11px 18px; border-radius: 10px; font-size: 14px; font-weight: 600;
+  border: none; cursor: pointer; transition: all 0.15s; font-family: inherit;
+  gap: 6px; min-width: 80px;
+  background: #fff; color: #ef4444; border: 1.5px solid rgba(239,68,68,0.25);
+}
+.btn-disconnect:hover { background: #fef2f2; }
+.btn-disconnect:active { transform: scale(0.97); }
+.btn-disconnect:disabled { opacity: 0.4; cursor: not-allowed; transform: none; }
+
+/* ── Status dot ──────────────────────────────────────── */
+.status-dot {
+  display: inline-block; width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0;
+  transition: all 0.3s;
+}
+.status-dot.offline   { background: #94a3b8; }
+.status-dot.authing   { background: #f59e0b; animation: dot-pulse 1s infinite; }
+.status-dot.connected { background: #10b981; }
+.status-dot.failed    { background: #ef4444; }
+
+@keyframes dot-pulse { 0%,100%{opacity:1} 50%{opacity:0.35} }
+
+/* ── Toggle ──────────────────────────────────────────── */
+.toggle { position: relative; display: inline-block; width: 40px; height: 22px; flex-shrink: 0; }
+.toggle input { opacity: 0; width: 0; height: 0; }
+.toggle .slider {
+  position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0;
+  background: #cbd5e1; border-radius: 22px; transition: 0.2s;
+}
+.toggle .slider::before {
+  content: ''; position: absolute; height: 16px; width: 16px; left: 3px; bottom: 3px;
+  background: white; border-radius: 50%; transition: 0.2s; box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+.toggle input:checked + .slider { background: #2563eb; }
+.toggle input:checked + .slider::before { transform: translateX(18px); }
+
+/* ── Scrollbar ───────────────────────────────────────── */
+::-webkit-scrollbar { width: 5px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.12); border-radius: 10px; }
+::-webkit-scrollbar-thumb:hover { background: rgba(0,0,0,0.22); }
+
+/* ── Combo select ────────────────────────────────────── */
+.combo {
+  -webkit-appearance: none; appearance: none; cursor: pointer;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%2394a3b8' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+  background-repeat: no-repeat; background-position: right 12px center; padding-right: 36px;
+}
+
+/* ── Card ────────────────────────────────────────────── */
+.card {
+  background: #fff; border: 1px solid rgba(148,163,184,0.12);
+  border-radius: 12px; padding: 14px 16px;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.05);
+}
