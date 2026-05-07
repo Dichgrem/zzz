@@ -3,12 +3,19 @@
 
 #include <stdint.h>
 
+#if defined(_MSC_VER)
+#define PACKED_STRUCT struct
+#pragma pack(push, 1)
+#elif defined(__GNUC__) || defined(__clang__)
+#define PACKED_STRUCT struct __attribute__((__packed__))
+#endif
+
 #define HARDWARE_ADDR_SIZE 6
 #define HARDWARE_ADDR_STR "%02x:%02x:%02x:%02x:%02x:%02x"
 #define HARDWARE_ADDR_FMT(mac)                                                 \
   (mac)[0], (mac)[1], (mac)[2], (mac)[3], (mac)[4], (mac)[5]
 
-#define IP_ADDR_SIZE 15
+#define IP_ADDR_SIZE 16
 #define IP_DEFAULT "127.0.0.1"
 
 #define ETHERNET_HEADER_SIZE 14
@@ -44,7 +51,7 @@ extern const uint8_t PAYLOAD_PADDING_HEADER[2];
 extern const uint8_t PAYLOAD_IDENTITY_HEADER[2];
 extern const uint8_t PAYLOAD_IP_HEADER[2];
 
-struct Packet {
+PACKED_STRUCT Packet {
   // Ethernet
   uint8_t dst_mac[HARDWARE_ADDR_SIZE];
   uint8_t src_mac[HARDWARE_ADDR_SIZE];
@@ -60,7 +67,11 @@ struct Packet {
   // EAP Data
   uint8_t eap_type;
   uint8_t eap_type_data[];
-} __attribute__((__packed__));
+};
+
+#if defined(_MSC_VER)
+#pragma pack(pop)
+#endif
 
 extern struct Packet g_default_packet;
 void packet_init_default();

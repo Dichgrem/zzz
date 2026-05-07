@@ -2,7 +2,11 @@
 #include "crypto/base64.h"
 #include "crypto/const.h"
 
+#ifdef _WIN32
+#include <winsock2.h>
+#else
 #include <arpa/inet.h>
+#endif
 #include <stdint.h>
 #include <stdio.h>
 #include <string.h>

@@ -6,7 +6,12 @@
 #include "utils/log.h"
 
 #include <stdio.h>
+#ifdef _WIN32
+#include <winsock2.h>
+#define htobe32(x) htonl(x)
+#else
 #include <endian.h>
+#endif
 #include <string.h>
 
 uint8_t g_aes_md5_response[32] = {0};
@@ -142,6 +147,7 @@ void lookup_dict(uint8_t *key, uint8_t *value, DictQuery query) {
   default:
     sprintf(err, "key %08x not found", key_);
     log_warn(err, NULL);
+    return;
   }
   memcpy(value, base_addr + query.offset, query.length);
 }

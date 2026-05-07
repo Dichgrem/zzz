@@ -1,0 +1,2 @@
+option('npcap_sdk', type : 'string', value : '',
+  description : 'Path to Npcap SDK (required for Windows cross-compilation)')

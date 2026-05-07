@@ -3,6 +3,7 @@
 
 #include <stdarg.h>
 #include <stddef.h>
+#include <stdio.h>
 
 // Define maximum log message size
 #define MAX_LOG_MESSAGE 1024

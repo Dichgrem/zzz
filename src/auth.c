@@ -14,9 +14,18 @@ struct pcap_pkthdr *g_hdr;
 void auth_handshake(void) {
   send_start_packet();
 
-  if (pcap_next_ex(g_device.handle, &g_hdr, (const u_char **)&g_pkt) != 1) {
-    log_error("failed to handshake with server", NULL);
-    exit(EXIT_FAILURE);
+  // Wait for a valid response from the server. Npcap on WiFi may loop back
+  // our own Start packet (eapol_type=START) before the server responds, so
+  // we must skip self-captured frames.
+  while (1) {
+    if (pcap_next_ex(g_device.handle, &g_hdr, (const unsigned char **)&g_pkt) != 1) {
+      log_error("failed to handshake with server", NULL);
+      exit(EXIT_FAILURE);
+    }
+    if (g_pkt->eapol_type == EAPOL_TYPE_START) continue;
+    if (g_pkt->eapol_type == EAPOL_TYPE_LOGOFF) continue;
+    if (g_pkt->eapol_type == EAPOL_TYPE_EAP && g_pkt->eap_code == EAP_CODE_RESPONSE) continue;
+    break;
   }
 
   memcpy(g_default_packet.dst_mac, g_pkt->src_mac, HARDWARE_ADDR_SIZE);
@@ -34,10 +43,16 @@ void auth_handshake(void) {
 }
 
 int auth_loop(void) {
-  if (pcap_next_ex(g_device.handle, &g_hdr, (const u_char **)&g_pkt) != 1) {
-    log_error("failed to get packet from server", NULL);
-    return 1;
-  }
+  // Wait for a packet from the server, skipping our own transmitted frames
+  // that Npcap on WiFi may loop back.
+  int result;
+  do {
+    result = pcap_next_ex(g_device.handle, &g_hdr, (const unsigned char **)&g_pkt);
+    if (result != 1) {
+      log_error("failed to get packet from server", NULL);
+      return 1;
+    }
+  } while (g_pkt->eap_code == EAP_CODE_RESPONSE);
 
   // in case if there's an error
   uint8_t err_msg_size = g_pkt->eap_type_data[0];
@@ -47,6 +62,8 @@ int auth_loop(void) {
 
   case EAP_CODE_SUCCESS:
     log_info("auth success (^_^)", NULL);
+    g_auth_ok = 1;
+    g_running = 0;
     break;
 
   case EAP_CODE_FAILURE:
