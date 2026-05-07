@@ -22,7 +22,7 @@ meson compile -C build
 ## Todo
 - [x] Integrity Check Algorithm  
 - [ ] Kickoff Recovery  
-- [ ] Support for Windows  
+- [x] Support for Windows  
 - [ ] Better Documentation  
 
 ## Credit

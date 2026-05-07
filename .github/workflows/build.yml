@@ -1,0 +1,64 @@
+name: Build zzz on windows
+on:
+  workflow_dispatch:
+jobs:
+  build:
+    runs-on: windows-latest
+    defaults:
+      run:
+        shell: bash
+    steps:
+      - uses: actions/checkout@v4
+      - uses: mlugg/setup-zig@v1
+        with:
+          version: "0.13.0"
+      - uses: actions/setup-go@v5
+        with:
+          go-version: "stable"
+      - name: Install Wails
+        run: go install github.com/wailsapp/wails/v2/cmd/wails@latest
+      - uses: oven-sh/setup-bun@v2
+      - name: Cache Npcap SDK
+        id: cache-npcap
+        uses: actions/cache@v4
+        with:
+          path: C:\npcap-sdk
+          key: npcap-sdk-1.13
+      - name: Download Npcap SDK
+        if: steps.cache-npcap.outputs.cache-hit != 'true'
+        run: |
+          curl -fsSL "https://npcap.com/dist/npcap-sdk-1.13.zip" -o /tmp/npcap-sdk.zip
+          mkdir -p /c/npcap-sdk
+          unzip -q /tmp/npcap-sdk.zip -d /c/npcap-sdk
+      - name: Build CLI
+        run: |
+          mkdir -p .output
+          zig cc \
+            -I include -I src \
+            -I /c/npcap-sdk/Include \
+            -L /c/npcap-sdk/Lib/x64 \
+            -o .output/zzz.exe \
+            src/main.c src/auth.c \
+            src/crypto/aes.c src/crypto/aes-md5.c \
+            src/crypto/base64.c src/crypto/const.c \
+            src/crypto/crypto.c src/crypto/md5.c \
+            src/packet/packet.c src/packet/send.c \
+            src/utils/config.c src/utils/device.c \
+            src/utils/ini.c src/utils/log.c \
+            -lwpcap -lPacket -lws2_32 -liphlpapi
+          ls -la .output/
+      - name: Build GUI
+        run: |
+          cd desktop
+          wails build -ldflags="-H=windowsgui -s -w"
+          mkdir -p ../.output
+          cp build/bin/zzz-gui.exe ../.output/zzz-gui.exe
+          ls -la ../.output/
+      - name: Upload binaries
+        uses: actions/upload-artifact@v4
+        with:
+          name: windows-binaries
+          path: |
+            .output/zzz.exe
+            .output/zzz-gui.exe
+          retention-days: 1
