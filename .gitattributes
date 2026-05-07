@@ -1,0 +1,27 @@
+# All text files use LF (Unix line endings) in the repository.
+# Git auto-detects which files are "text" and handles line endings.
+
+* text=auto eol=lf
+
+# Windows-specific files need CRLF to work correctly
+*.bat text eol=crlf
+*.cmd text eol=crlf
+*.ps1 text eol=crlf
+
+# Source code always uses LF
+*.c   text eol=lf
+*.h   text eol=lf
+*.cs  text eol=lf
+*.csproj text eol=lf
+*.toml text eol=lf
+*.md  text eol=lf
+*.xml text eol=lf
+*.iss text eol=lf
+
+# Binary files should never be converted
+*.exe binary
+*.dll binary
+*.ico binary
+*.pdb binary
+*.png binary
+*.lock binary
