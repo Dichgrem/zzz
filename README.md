@@ -1,5 +1,9 @@
 # zzz
 
+<p align="center">
+  <img src="https://github.com/Dichgrem/GUI.for.ZZZ/blob/main/zzz-gui.png" width="400">
+</p>
+
 sleepy 802.1x client. 😴
 
 ![zzz running in my laptop](Screenshot.png)

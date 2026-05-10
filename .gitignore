@@ -8,3 +8,4 @@ dist/
 !installer/webview2/*.exe
 !installer/npcap/*.exe
 result
+.codegraph
